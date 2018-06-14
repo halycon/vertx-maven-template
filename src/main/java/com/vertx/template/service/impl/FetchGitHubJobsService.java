@@ -4,11 +4,16 @@ import com.vertx.template.repository.IFetchJobsRepository;
 import com.vertx.template.repository.impl.FetchJobsMongoRepository;
 import com.vertx.template.service.IFetchJobsService;
 import io.vertx.core.*;
+import io.vertx.core.impl.ConversionHelper;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
+
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public class FetchGitHubJobsService extends AbstractVerticle implements IFetchJobsService {
 
@@ -64,11 +69,16 @@ public class FetchGitHubJobsService extends AbstractVerticle implements IFetchJo
                 if (ar.succeeded()) {
                     JsonArray response = ar.result().bodyAsJsonArray();
 
-                    logger.info("test");
 
+                    response = ConversionHelper.toJsonArray(response.stream().sorted(
+                        Comparator.comparing(a ->  ((JsonObject) a).getString("company"))
+                    ).collect(Collectors.toList()));
+
+
+                    JsonArray finalResponse = response;
                     fetchJobsMongoRepository.saveAll(response, res2 -> {
                         if (res2.succeeded()) {
-                            resultHandler.handle(Future.succeededFuture(response));
+                            resultHandler.handle(Future.succeededFuture(finalResponse));
                         } else {
                             resultHandler.handle(Future.succeededFuture());
                         }

@@ -1,0 +1,4 @@
+{
+    "mongo.uri" : "mongodb://mongodb_docker:27017",
+    "mongo.db" : "prod"
+}

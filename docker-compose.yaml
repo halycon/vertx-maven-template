@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+  vertx_maven_template:
+    restart: always
+    image: vertx_maven_template
+    container_name: vertx_maven_template
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongodb_docker
+    networks:
+      - localmongonetwork
+  mongodb_docker:
+    image: mongo:latest
+    container_name: mongo_db_image
+    volumes:
+      - /devel/mongodata:/opt/mongodata
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null # --quiet
+    networks:
+      - localmongonetwork
+networks:
+  localmongonetwork:
+    driver: bridge

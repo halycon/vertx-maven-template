@@ -29,7 +29,11 @@ public class FetchGitHubJobsService extends AbstractVerticle implements IFetchJo
         client = WebClient.create(vertx, new WebClientOptions()
             .setSsl(true).setTrustAll(true));
         fetchJobsMongoRepository = new FetchJobsMongoRepository();
-        vertx.deployVerticle((Verticle) fetchJobsMongoRepository);
+
+        DeploymentOptions options = new DeploymentOptions().setWorker(true);
+        options.setConfig(config());
+
+        vertx.deployVerticle((Verticle) fetchJobsMongoRepository,options);
     }
 
     @Override

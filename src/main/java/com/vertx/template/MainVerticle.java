@@ -2,18 +2,19 @@ package com.vertx.template;
 
 import com.vertx.template.service.IFetchJobsService;
 import com.vertx.template.service.impl.FetchGitHubJobsService;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Context;
-import io.vertx.core.Verticle;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
 
 public class MainVerticle extends AbstractVerticle {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private IFetchJobsService fetchJobsService;
 
@@ -24,12 +25,17 @@ public class MainVerticle extends AbstractVerticle {
         super.init(vertx, context);
         emptyJsonArray = new JsonArray();
         fetchJobsService = new FetchGitHubJobsService();
-        vertx.deployVerticle((Verticle) fetchJobsService);
+        DeploymentOptions options = new DeploymentOptions().setWorker(true);
+        options.setConfig(config());
+        vertx.deployVerticle((Verticle) fetchJobsService,options);
+
+        logger.info("mongo.db "+config().getString("mongo.db") );
+        logger.info("mongo.uri "+config().getString("mongo.uri") );
     }
 
 
     @Override
-    public void start() throws Exception {
+    public void start() {
 
         Router router = Router.router(vertx);
 

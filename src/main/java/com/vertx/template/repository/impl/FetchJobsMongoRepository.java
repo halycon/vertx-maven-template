@@ -13,16 +13,23 @@ public class FetchJobsMongoRepository extends AbstractVerticle implements IFetch
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private MongoClient mongoClient;
 
     @Override
     public void init(Vertx vertx, Context context) {
         super.init(vertx, context);
+
+        JsonObject mongoconfig = new JsonObject()
+            .put("connection_string", context.config().getString("mongo.uri"))
+            .put("db_name", context.config().getString("mongo.db"));
+        logger.info("mongo.db "+context.config().getString("mongo.db") );
+        logger.info("mongo.uri "+context.config().getString("mongo.uri") );
+
+        mongoClient = MongoClient.createShared(vertx, mongoconfig);
     }
 
     @Override
     public void saveAll(JsonArray jobs, Handler<AsyncResult<JsonArray>> resultHandler) {
-
-        MongoClient mongoClient = MongoClient.createShared(vertx, prepareDBConfig());
 
         jobs.forEach(job -> {
             ((JsonObject) job).put("_id",(((JsonObject) job).getString("id")));
@@ -34,10 +41,4 @@ public class FetchJobsMongoRepository extends AbstractVerticle implements IFetch
 
     }
 
-    public JsonObject prepareDBConfig(){
-        JsonObject mongoconfig = new JsonObject()
-            .put("connection_string", "mongodb://localhost:27017")
-            .put("db_name", "prod");
-        return mongoconfig;
-    }
 }

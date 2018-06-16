@@ -14,7 +14,7 @@ MongoDB install on local (or dont if docker installed)
 
 
 "maven install" for build
-java -jar target/ MainVerticle-1.0.0-SNAPSHOT-fat.jar -conf src/conf/app.json
+java -jar target/vertx-maven-template-1.0.0-SNAPSHOT-fat.jar -conf src/conf/app.json
 
 or 
 

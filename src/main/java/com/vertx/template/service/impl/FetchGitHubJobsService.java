@@ -7,8 +7,6 @@ import io.vertx.core.*;
 import io.vertx.core.impl.ConversionHelper;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 
@@ -16,8 +14,6 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class FetchGitHubJobsService extends AbstractVerticle implements IFetchJobsService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private WebClient client;
 

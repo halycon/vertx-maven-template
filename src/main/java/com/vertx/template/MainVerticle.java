@@ -20,6 +20,9 @@ public class MainVerticle extends AbstractVerticle {
 
     private JsonArray emptyJsonArray;
 
+    private String contentTypeParamName = "content-type";
+    private String contentType = "application/json";
+
     @Override
     public void init(Vertx vertx, Context context) {
         super.init(vertx, context);
@@ -51,14 +54,16 @@ public class MainVerticle extends AbstractVerticle {
         String cityName = routingContext.request().getParam("cityName");
 
         HttpServerResponse response = routingContext.response();
+
+
         if (description == null || cityName==null) {
             response.setStatusCode(400).end();
         } else {
             fetchJobsService.getJobsAndSortByCompanyName(cityName,description,res->{
                 if(res.succeeded()){
-                    routingContext.response().putHeader("content-type", "application/json").end(res.result().encodePrettily());
+                    routingContext.response().putHeader(contentTypeParamName, contentType).end(res.result().encodePrettily());
                 }else{
-                    routingContext.response().putHeader("content-type", "application/json").end(emptyJsonArray.encodePrettily());
+                    routingContext.response().putHeader(contentTypeParamName, contentType).end(emptyJsonArray.encodePrettily());
                 }
             });
         }
@@ -75,9 +80,9 @@ public class MainVerticle extends AbstractVerticle {
         } else {
             fetchJobsService.getJobs(cityName,description,res->{
                 if(res.succeeded()){
-                    routingContext.response().putHeader("content-type", "application/json").end(res.result().encodePrettily());
+                    routingContext.response().putHeader(contentTypeParamName, contentType).end(res.result().encodePrettily());
                 }else{
-                    routingContext.response().putHeader("content-type", "application/json").end(emptyJsonArray.encodePrettily());
+                    routingContext.response().putHeader(contentTypeParamName, contentType).end(emptyJsonArray.encodePrettily());
                 }
             });
         }
